@@ -1,28 +1,37 @@
 from sqlalchemy.orm import Session
 
 from app.services.article_service import ingest_articles
-from app.services.ranker import rank_article
-from app.services.summarizer import summarize_article
-from app.models.article import Article
+
+from app.routes.newsletters import (
+    rank_all,
+    select_top_stories,
+    summarize_top_stories,
+    generate_newsletter
+)
 
 
 def run_pipeline(db: Session):
 
-    results = {}
+    print("Step 1: Ingesting articles...")
+    ingest_result = ingest_articles(db)
 
-    # 1. Ingest
-    results["ingest"] = ingest_articles(db)
+    print("Step 2: Ranking articles...")
+    rank_result = rank_all(db)
 
-    # TODO
-    # rank articles
+    print("Step 3: Selecting top stories...")
+    top_stories_result = select_top_stories(db)
 
-    # TODO
-    # select top stories
+    print("Step 4: Summarizing top stories...")
+    summary_result = summarize_top_stories(db)
 
-    # TODO
-    # summarize top stories
+    print("Step 5: Generating newsletter...")
+    newsletter_result = generate_newsletter(db)
 
-    # TODO
-    # generate newsletter
-
-    return results
+    return {
+        "status": "success",
+        "ingest": ingest_result,
+        "ranking": rank_result,
+        "top_stories": top_stories_result,
+        "summaries": summary_result,
+        "newsletter": newsletter_result
+    }
