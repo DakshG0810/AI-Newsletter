@@ -11,7 +11,7 @@ from app.services.newsletter_generator import (
 )
 from datetime import datetime, timedelta
 from app.models.newsletter import Newsletter
-
+from app.services.pipeline import run_pipeline
 
 router = APIRouter(
     prefix="/news",
@@ -428,29 +428,7 @@ def get_top_stories(
     ]
 
 @router.post("/run-pipeline")
-def run_pipeline(
+def run_pipeline_endpoint(
     db: Session = Depends(get_db)
 ):
-
-    results = {}
-
-    # 1. Ingest
-    results["ingest"] = ingest_articles(db)
-
-    # 2. Rank
-    rank_all(db)
-
-    # 3. Select top stories
-    top_stories = select_top_stories(db)
-
-    # 4. Summarize
-    summarize_top_stories(db)
-
-    # 5. Generate newsletter
-    newsletter = generate_newsletter(db)
-
-    return {
-        "status": "success",
-        "top_stories": top_stories,
-        "newsletter": newsletter
-    }
+    return run_pipeline(db)

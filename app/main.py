@@ -6,9 +6,7 @@ from app.routes.subscribers import router as subscriber_router
 from app.routes.newsletters import router as news_router
 from app.models.newsletter import Newsletter
 from fastapi.middleware.cors import CORSMiddleware
-from app.services.scheduler import (
-    start_scheduler
-)
+
 # Create tables
 Base.metadata.create_all(bind=engine)
 
@@ -31,7 +29,3 @@ def root():
     return {
         "message": "AI Newsletter Backend Running"
     }
-@app.on_event("startup")
-def startup_event():
-
-    start_scheduler()
