@@ -453,3 +453,7 @@ def run_pipeline(
         "summaries": summary_result,
         "newsletter": newsletter
     }
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
