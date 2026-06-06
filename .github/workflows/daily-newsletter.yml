@@ -11,6 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Trigger Newsletter
+      - name: Trigger Pipeline
         run: |
-          curl -X POST https://ai-newsletter-ebky.onrender.com/news/generate-newsletter
+          curl -X POST https://ai-newsletter-ebky.onrender.com/news/run-pipeline
