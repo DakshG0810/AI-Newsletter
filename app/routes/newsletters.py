@@ -454,6 +454,6 @@ def run_pipeline(
         "newsletter": newsletter
     }
 
-@app.get("/health")
+@router.get("/health")
 def health():
     return {"status": "ok"}
