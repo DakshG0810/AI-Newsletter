@@ -33,7 +33,11 @@ export function Navbar() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-foreground text-background">
-            <Sparkles className="h-4 w-4" />
+          <img
+            src="/logo.svg"
+            alt="The AI Dispatch"
+            className="h-8 w-8"
+          />
           </span>
           <span>The AI Dispatch</span>
         </Link>

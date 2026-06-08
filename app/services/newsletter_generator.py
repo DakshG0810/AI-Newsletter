@@ -15,6 +15,8 @@ Title: {article.title}
 
 Source: {article.source}
 
+URL: {article.url}
+
 Summary:
 {article.summary}
 
@@ -47,6 +49,33 @@ Before writing:
 5. Mention sources where appropriate.
 6. Do not repeat the same company announcement twice.
 7. Use only information provided in the articles.
+8. Every story MUST end with a source link in markdown format.
+(via [Source Name](Article URL))
+
+Examples:
+
+(via [TechCrunch](https://techcrunch.com/example))
+
+(via [The Verge](https://theverge.com/example))
+
+Do not place links anywhere else.
+Do not place source names at the end of paragraphs.
+Use the exact format above.
+9. Every story MUST end with a source citation in EXACTLY this format
+Example format:
+
+## Top Stories
+
+* **Headline:** Summary text. (via [TechCrunch](https://example.com))
+
+* **Headline:** Summary text. (via [The Verge](https://example.com))
+
+## Research & Models
+
+* **Headline:** Summary text. (via [MarkTechPost](https://example.com))
+
+Use bullet points throughout the newsletter.
+Keep the structure exactly like the example.
 
 Stories:
 

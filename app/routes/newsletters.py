@@ -11,6 +11,9 @@ from app.services.newsletter_generator import (
 )
 from datetime import datetime, timedelta
 from app.models.newsletter import Newsletter
+from app.services.email_service import (
+    send_newsletter_email
+)
 
 router = APIRouter(
     prefix="/news",
@@ -373,7 +376,8 @@ def latest_newsletter(
     return {
         "id": newsletter.id,
         "title": newsletter.title,
-        "content": newsletter.content
+        "content": newsletter.content,
+        "created_at": newsletter.created_at
     }
 
 @router.get("/stats")
@@ -445,15 +449,137 @@ def run_pipeline(
     # 5. Generate newsletter
     newsletter = generate_newsletter(db)
 
+    latest_newsletter = (
+        db.query(Newsletter)
+        .order_by(
+            Newsletter.created_at.desc()
+        )
+        .first()
+    )
+
+    subscribers = (
+        db.query(Subscriber)
+        .filter(
+            Subscriber.is_active == True
+        )
+        .all()
+    )
+
+    emails_sent = 0
+    emails_failed = 0
+
+    for subscriber in subscribers:
+
+        try:
+
+            result = send_newsletter_email(
+                subscriber.email,
+                latest_newsletter
+            )
+
+            if result["success"]:
+
+                emails_sent += 1
+
+            else:
+
+                emails_failed += 1
+
+        except Exception as e:
+
+            emails_failed += 1
+
+            print(
+                f"Failed to send newsletter to "
+                f"{subscriber.email}: {e}"
+            )
+
     return {
         "status": "success",
         "ingest": ingest_result,
         "ranking": rank_result,
         "top_stories": top_stories,
         "summaries": summary_result,
-        "newsletter": newsletter
+        "newsletter": newsletter_result,
+        "emails_sent": emails_sent,
+        "emails_failed": emails_failed
     }
 
+@router.post("/send-test-email")
+def send_test_email(
+    db: Session = Depends(get_db)
+):
+
+    newsletter = (
+        db.query(Newsletter)
+        .order_by(
+            Newsletter.id.desc()
+        )
+        .first()
+    )
+
+    if not newsletter:
+
+        return {
+            "error": "No newsletter found"
+        }
+
+    result = send_newsletter_email(
+        "prernaaa13@gmail.com",
+        newsletter
+    )
+
+    return result
 @router.get("/health")
 def health():
     return {"status": "ok"}
+
+@router.get("/preview-newsletter-links-only-for-testing")
+def preview_newsletter_links(
+    db: Session = Depends(get_db)
+):
+
+    articles = (
+        db.query(Article)
+        .filter(
+            Article.is_top_story == True
+        )
+        .all()
+    )
+
+    content = generate_newsletter_content(
+        articles
+    )
+
+    return {
+        "content": content
+    }
+
+@router.post("/send-preview-email-test")
+def send_preview_email(
+    db: Session = Depends(get_db)
+):
+
+    articles = (
+        db.query(Article)
+        .filter(
+            Article.is_top_story == True
+        )
+        .all()
+    )
+
+    content = generate_newsletter_content(
+        articles
+    )
+
+    preview_newsletter = Newsletter(
+        title="Preview Newsletter",
+        content=content
+    )
+
+    result = send_newsletter_email(
+        "daksh0810@gmail.com",
+        preview_newsletter
+    )
+
+    return result
