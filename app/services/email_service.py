@@ -52,7 +52,7 @@ def build_newsletter_html(newsletter):
             
             You're receiving this email because you subscribed to The AI Dispatch. </p> 
             
-            <a href="http://localhost:8000/subscribers/unsubscribe" style=" display: inline-block; 
+            <a href="https://ai-newsletter-ebky.onrender.com/subscribers/unsubscribe" style=" display: inline-block; 
             padding: 10px 18px; border: 1px solid #d1d5db; border-radius: 6px; text-decoration: none; color: #374151; font-size: 14px; " > 
             Unsubscribe 
             </a> 
@@ -81,7 +81,7 @@ def send_newsletter_email(
             {
                 "from": "AI Dispatch <newsletter@theaidispatch.in>",
                 "to": [email],
-                "subject": f"Newsletter: {newsletter.created_at.strftime('%B %d, %Y')}",
+                "subject": newsletter.title,
                 "html": html
             }
         )
