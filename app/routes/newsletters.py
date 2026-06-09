@@ -14,7 +14,7 @@ from app.models.newsletter import Newsletter
 from app.services.email_service import (
     send_newsletter_email
 )
-
+from app.models.subscriber import Subscriber
 router = APIRouter(
     prefix="/news",
     tags=["News"]
