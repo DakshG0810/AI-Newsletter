@@ -15,6 +15,12 @@ from app.services.email_service import (
     send_newsletter_email
 )
 from app.models.subscriber import Subscriber
+from app.services.email_service import (
+    send_welcome_email
+)
+import time
+
+
 router = APIRouter(
     prefix="/news",
     tags=["News"]
@@ -484,6 +490,8 @@ def run_pipeline(
             else:
 
                 emails_failed += 1
+                
+            time.sleep(0.6)
 
         except Exception as e:
 
@@ -500,7 +508,7 @@ def run_pipeline(
         "ranking": rank_result,
         "top_stories": top_stories,
         "summaries": summary_result,
-        "newsletter": newsletter_result,
+        "newsletter": newsletter,
         "emails_sent": emails_sent,
         "emails_failed": emails_failed
     }
@@ -583,3 +591,42 @@ def send_preview_email(
     )
 
     return result
+
+@router.post("/send-welcome-to-all-temp")
+def send_welcome_to_all(
+    db: Session = Depends(get_db)
+):
+
+    subscribers = (
+        db.query(Subscriber)
+        .filter(
+            Subscriber.is_active == True
+        )
+        .all()
+    )
+
+    success = 0
+    failed = 0
+
+    for subscriber in subscribers:
+
+        try:
+
+            send_welcome_email(
+                subscriber.email
+            )
+
+            success += 1
+
+        except Exception as e:
+
+            failed += 1
+
+            print(
+                f"Failed for {subscriber.email}: {e}"
+            )
+
+    return {
+        "success": success,
+        "failed": failed
+    }
